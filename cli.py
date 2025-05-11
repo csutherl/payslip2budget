@@ -26,6 +26,7 @@ def main():
     transactions = adp.parse_payslip(args.input)
 
     # Handle output
+    # TODO: specifing the api-config arg should be enough, default output to None and send to the api when the config is used or error if no output and no api-config arg
     if args.output == "api":
         if not args.config:
             parser.error("--api-config is required when output is 'api'")

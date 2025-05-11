@@ -4,7 +4,10 @@ setup(
     name="payslip2budget",
     version="0.1.0",
     packages=find_packages(),
-    install_requires=["PyPDF2","pdfplumber","datetime"],
+    install_requires=["PyPDF2","pdfplumber","datetime","requests"],
+    extras_require-{
+        'test': ['pytest'],
+    },
     entry_points={{
         "console_scripts": [
             "payslip2budget=cli:main",
