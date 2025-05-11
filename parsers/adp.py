@@ -212,8 +212,13 @@ class PayslipParser:
                 # Find the first amount that appears after this item name
                 start_idx = segment['index'] + segment['length']
                 for j in range(start_idx, len(parts)):
-                    amount = self.extract_money_amount(parts[j])
-                    if amount is not None:
+                    # If the item is the year-to-date column, then the amount is 0
+                    if parts[j] == parts[-1]:
+                        amount = 0
+                    else:
+                        amount = self.extract_money_amount(parts[j])
+
+                    if amount is not None and amount != 0:
                         # We found the first amount for this item - always use the first amount (current period)
                         items.append((item_name, abs(amount)))
                         break
@@ -252,8 +257,13 @@ class PayslipParser:
                         
                         # Find the first amount after this item
                         for j in range(end_idx+1, len(parts)):
-                            amount = self.extract_money_amount(parts[j])
-                            if amount is not None:
+                            # If the item is the year-to-date column, then the amount is 0
+                            if parts[j] == parts[-1]:
+                                amount = 0
+                            else:
+                                amount = self.extract_money_amount(parts[j])
+
+                            if amount is not None and amount != 0:
                                 items.append((item_name, abs(amount)))
                                 break
                         
