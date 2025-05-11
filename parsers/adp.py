@@ -81,6 +81,7 @@ class PayslipParser:
         """
         transactions = []
         total_deductions = 0.0
+        total_additions = 0.0
         
         # Suppress pdfplumber/pdfminer warnings
         logging.getLogger('pdfminer').setLevel(logging.ERROR)
@@ -99,27 +100,39 @@ class PayslipParser:
                     for item_name, amount in items:
                         category = self.categorize_line(item_name)
                         if category:
-                            total_deductions += amount
+                            if amount < 0:
+                                total_deductions -= amount
+                            else:
+                                total_additions += amount
+
                             transactions.append({
                                 "Date": datetime.today().strftime('%Y-%m-%d'),
                                 "Payee": self.payee,
                                 "Category": category,
                                 "Memo": item_name.strip(),
-                                "Outflow": f"{amount:.2f}",
-                                "Inflow": ""
+                                "Amount": f"{amount:.2f}",
                             })
         
-        # Offset inflow
+        # Offset deductions with an addition
         if total_deductions > 0:
             transactions.append({
                 "Date": datetime.today().strftime('%Y-%m-%d'),
                 "Payee": self.payee,
                 "Category": "Income:Gross Pay Offset",
                 "Memo": "Offset for itemized paycheck deductions",
-                "Outflow": "",
-                "Inflow": f"{total_deductions:.2f}"
+                "Amount": f"{total_deductions:.2f}"
             })
         
+        # Offset additions with a deduction
+        if total_additions > 0:
+            transactions.append({
+                "Date": datetime.today().strftime('%Y-%m-%d'),
+                "Payee": self.payee,
+                "Category": "Income:Gross Pay Offset",
+                "Memo": "Offset for itemized paycheck additions (employer contributions)",
+                "Amount": f"-{total_additions:.2f}"
+            })
+
         # Save to CSV if requested
         if output_csv and transactions:
             self.save_to_csv(transactions, output_csv)
@@ -134,7 +147,7 @@ class PayslipParser:
             transactions: List of transaction dictionaries
             output_path: Path to save the CSV file
         """
-        fieldnames = ["Date", "Payee", "Category", "Memo", "Outflow", "Inflow"]
+        fieldnames = ["Date", "Payee", "Category", "Memo", "Amount"]
         
         try:
             with open(output_path, 'w', newline='') as csvfile:
@@ -220,7 +233,7 @@ class PayslipParser:
 
                     if amount is not None and amount != 0:
                         # We found the first amount for this item - always use the first amount (current period)
-                        items.append((item_name, abs(amount)))
+                        items.append((item_name, amount))
                         break
         
         # Special handling for items that might need specific detection
@@ -264,7 +277,7 @@ class PayslipParser:
                                 amount = self.extract_money_amount(parts[j])
 
                             if amount is not None and amount != 0:
-                                items.append((item_name, abs(amount)))
+                                items.append((item_name, amount))
                                 break
                         
                         break

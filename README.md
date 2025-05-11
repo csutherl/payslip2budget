@@ -63,9 +63,7 @@ pytest
 - Configurable category mapping
 
 ## TODOs
-- fix employer contributions as outflows, they should be inflows
 - update date to the check date if its not it
-- skip stock offset when there's no amount instead of using ytd amount
 - figure out how to identify state vs federal witholdings 
 
 ## 📄 License
