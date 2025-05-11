@@ -1,0 +1,9 @@
+{
+    "Health Savings Account": ["hsa", "health savings"],
+    "Legal": ["legal", "metlifelegal"],
+    "Retirement": ["401", "roth", "retirement"],
+    "Insurance:Medical": ["medical", "dental", "vision", "healthcare"],
+    "Insurance:Supplemental": ["insurance", "disability", "life ins"],
+    "Taxes:Stock Award Withholding": ["stock offset", "rsu", "equity award"],
+    "Taxes:Withholding": ["withholding", "social security", "medicare", "tax"]
+}

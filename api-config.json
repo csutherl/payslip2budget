@@ -1,0 +1,8 @@
+{
+  "api": {
+    "type": "ynab",
+    "token": "YOUR_YNAB_ACCESS_TOKEN",
+    "budget_id": "YOUR_BUDGET_ID",
+    "account_id": "YOUR_ACCOUNT_ID"
+  }
+}
