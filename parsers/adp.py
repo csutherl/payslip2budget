@@ -82,6 +82,7 @@ class PayslipParser:
         transactions = []
         total_deductions = 0.0
         total_additions = 0.0
+        tax_type = None
         
         # Suppress pdfplumber/pdfminer warnings
         logging.getLogger('pdfminer').setLevel(logging.ERROR)
@@ -92,6 +93,17 @@ class PayslipParser:
                 lines = page.extract_text().splitlines()
                 for line in lines:
                     if "net pay" in line.lower() or "direct deposit" in line.lower():
+                        continue
+
+                    # Capture federal vs state to correctly count the generic 'withholding tax' lines
+                    if "tax deductions: federal" in line.lower():
+                        tax_type = "Federal"
+                        continue
+                    elif "tax deductions:" in line.lower():
+                        tax_type = "State"
+                        continue
+                    elif "additional deductions" in line.lower():
+                        tax_type = None
                         continue
                     
                     # Find all potential deduction items in the line
@@ -105,11 +117,18 @@ class PayslipParser:
                             else:
                                 total_additions += amount
 
+                            # Set memo field so I can modify it instead of using item_name.strip() directly
+                            memo = item_name.strip()
+                            # Insert tax type, if applicable
+                            if tax_type is not None:
+                                if memo == "Withholding Tax":
+                                    memo = f"{tax_type} {memo}"
+
                             transactions.append({
                                 "Date": datetime.today().strftime('%Y-%m-%d'),
                                 "Payee": self.payee,
                                 "Category": category,
-                                "Memo": item_name.strip(),
+                                "Memo": memo,
                                 "Amount": f"{amount:.2f}",
                             })
         
