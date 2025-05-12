@@ -23,7 +23,7 @@ class PayslipParser:
             "Insurance:Medical": ["medical"],
             "Insurance:Dental": ["dental"],
             "Insurance:Vision": ["vision"],
-            "Insurance:Supplemental": [" life", "insurance"],
+            "Insurance:Supplemental": [" life", "insurance", "accident", "hospital"],
             "Taxes:Stock Award Withholding": ["stock offset"],
             "Taxes:Withholding": ["withholding"],
             "Taxes:Social Security": ["social security"],
@@ -92,9 +92,6 @@ class PayslipParser:
             for page in pdf.pages:
                 lines = page.extract_text().splitlines()
                 for line in lines:
-                    if "net pay" in line.lower() or "direct deposit" in line.lower():
-                        continue
-
                     # Capture federal vs state to correctly count the generic 'withholding tax' lines
                     if "tax deductions: federal" in line.lower():
                         tax_type = "Federal"
@@ -123,6 +120,7 @@ class PayslipParser:
                             if tax_type is not None:
                                 if memo == "Withholding Tax":
                                     memo = f"{tax_type} {memo}"
+                                    category = f"Taxes:{tax_type} Withholding"
 
                             transactions.append({
                                 "Date": datetime.today().strftime('%Y-%m-%d'),
