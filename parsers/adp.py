@@ -23,7 +23,7 @@ class PayslipParser:
             "Insurance:Medical": ["medical"],
             "Insurance:Dental": ["dental"],
             "Insurance:Vision": ["vision"],
-            "Insurance:Supplemental": [" life"],
+            "Insurance:Supplemental": [" life", "insurance"],
             "Taxes:Stock Award Withholding": ["stock offset"],
             "Taxes:Withholding": ["withholding"],
             "Taxes:Social Security": ["social security"],
