@@ -65,6 +65,8 @@ pytest
 ## TODOs
 - update date to the check date if its not it
 - figure out how to identify state vs federal witholdings 
+- match total deductions to the gross - net amount to confirm all lines are captured
+- allow for batching pdfs in a directory to generate transactions for multiple payslips
 
 ## 📄 License
 
