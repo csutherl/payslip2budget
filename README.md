@@ -8,14 +8,14 @@
 
 - ✅ Extracts line items from ADP-style payslip PDFs  
 - ✅ Groups deductions into customizable categories (e.g., HSA, insurance, retirement, taxes)  
-- ✅ Outputs CSV files compatible with:
+- ✅ Outputs CSV files compatible with (disclaimer: only tested with YNAB!):
   - [YNAB (You Need A Budget)](https://www.ynab.com/)
   - [Mint](https://mint.intuit.com/)
   - [EveryDollar](https://www.everydollar.com/)
   - [Monarch](https://www.monarchmoney.com/)
 - ✅ Adds an automatic offset deposit transaction to prevent double-counting taxes or deductions  
-- ✅ Output to file or stdout (`-`)  
-- ✅ Extensible for new payslip formats  
+- ✅ Output to file, stdout (`-`), or send transactions directly to an API endpoint
+- ✅ Extensible for new payslip formats, transaction data models, exporters, etc 
 
 ## 🛠 Installation
 
@@ -32,7 +32,7 @@ pip install -e .[dev]
 ## 🚀 Usage
 
 ```bash
-payslip2budget input.pdf output.csv --format ynab
+payslip2budget input.pdf output.csv
 ```
 
 ### Arguments
@@ -46,7 +46,7 @@ payslip2budget input.pdf output.csv --format ynab
 ### Example
 
 ```bash
-payslip2budget my_adp_payslip.pdf - --format mint
+payslip2budget my_adp_payslip.pdf -
 ```
 
 ## 🧪 Running Tests
@@ -57,14 +57,12 @@ pytest
 
 ## 🧠 Future Plans
 
-- You could eventually let users supply custom formatters via plugins or JSON templates
-- Support upload or sync endpoints (like direct Monarch or YNAB API sync)
+- Let users supply custom formatters via plugins or JSON templates
 - Support for non-ADP payslips
 - Configurable category mapping
 
 ## TODOs
 - update date to the check date if its not it
-- figure out how to identify state vs federal witholdings 
 - match total deductions to the gross - net amount to confirm all lines are captured
 - allow for batching pdfs in a directory to generate transactions for multiple payslips
 
