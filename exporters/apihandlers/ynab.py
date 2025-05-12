@@ -3,6 +3,7 @@ from models.transaction_base import Transaction
 from models.ynab_transaction import YNABTransaction
 from exporters.apihandlers.apihandlerbase import APIHandlerBase
 
+# This class is still a WIP and incomplete!
 class YNABAPIHandler(APIHandlerBase):
     def __init__(self, config):
         super().__init__(config)
