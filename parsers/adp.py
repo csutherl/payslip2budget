@@ -19,7 +19,7 @@ class PayslipParser:
         self.category_mappings = {
             "Health Savings Account": ["hsa"],
             "Legal": ["legal"],
-            "Retirement": ["401k", "roth"],
+            "Retirement": ["401(k)", "401k", "roth"],
             "Insurance:Medical": ["medical"],
             "Insurance:Dental": ["dental"],
             "Insurance:Vision": ["vision"],
