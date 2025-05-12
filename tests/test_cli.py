@@ -15,7 +15,7 @@ def test_cli_runs(monkeypatch):
 
     # Stub subprocess call to just ensure CLI doesn't crash
     result = subprocess.run(
-        ["python", "cli.py", "tests/sample.pdf", "-", "--format", "ynab", "--config", str(config_path)],
+        ["python", "cli.py", "tests/sample.pdf", "--format", "ynab", "--api-config", str(config_path), "-"],
         capture_output=True, text=True
     )
 
