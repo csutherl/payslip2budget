@@ -11,7 +11,7 @@ requires-python = ">=3.7"
 authors = [
     {name = "Coty Sutherland"},
 ]
-license = { text = "MIT" }
+license = "MIT"
 dependencies = [
   "PyPDF2",
   "pdfplumber",
