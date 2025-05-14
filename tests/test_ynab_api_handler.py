@@ -14,9 +14,9 @@ class TestYNABAPIHandler(unittest.TestCase):
         }
         self.handler = YNABAPIHandler(self.config)
         
-        self.transactions = [{"Date": "2025-05-10", "Payee": "Employer", "Category": "Insurance:Medical", "Memo": "Salary", "Amount": 123456}]
-        self.payee_dne_transactions = [{"Date": "2025-05-10", "Payee": "Employer 2", "Category": "Insurance:Medical", "Memo": "Salary", "Amount": 123456}]
-        self.category_dne_transactions = [{"Date": "2025-05-10", "Payee": "Employer", "Category": "Taxes", "Memo": "Salary", "Amount": 123456}]
+        self.transactions = [{"Date": "2025-05-10", "Payee": "Employer", "Category": "Insurance:Medical", "Memo": "Salary", "Amount": 123456.00}]
+        self.payee_dne_transactions = [{"Date": "2025-05-10", "Payee": "Employer 2", "Category": "Insurance:Medical", "Memo": "Salary", "Amount": 123456.00}]
+        self.category_dne_transactions = [{"Date": "2025-05-10", "Payee": "Employer", "Category": "Taxes", "Memo": "Salary", "Amount": 123456.00}]
 
         self.test_categories_response_data = load_json_fixture("test_categories_response_data.json")
         self.test_account_response_data = load_json_fixture("test_account_response_data.json")
@@ -70,7 +70,7 @@ class TestYNABAPIHandler(unittest.TestCase):
         args, kwargs = mock_post.call_args
         self.assertIn("Authorization", kwargs["headers"])
         self.assertIn("transactions", kwargs["json"])
-        self.assertEqual(kwargs["json"]["transactions"][0]["amount"], 123456)
+        self.assertEqual(kwargs["json"]["transactions"][0]["amount"], 123456000)
         self.assertEqual(result, {"data": {"transaction_ids": ["123"]}})
 
     @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
@@ -89,7 +89,7 @@ class TestYNABAPIHandler(unittest.TestCase):
         args, kwargs = mock_post.call_args
         self.assertIn("Authorization", kwargs["headers"])
         self.assertIn("transactions", kwargs["json"])
-        self.assertEqual(kwargs["json"]["transactions"][0]["amount"], 123456)
+        self.assertEqual(kwargs["json"]["transactions"][0]["amount"], 123456000)
         self.assertEqual(result, {"data": {"transaction_ids": ["123"]}})
 
     @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
