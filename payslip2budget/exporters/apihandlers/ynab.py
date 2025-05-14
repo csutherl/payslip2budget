@@ -42,15 +42,15 @@ class YNABAPIHandler(APIHandlerBase):
 
         ynab_transactions = []
         for txn in transactions:
-            category_tuple = self.get_category_tuple(txn["category"])
-            payee_id = self.get_cached_payee_id(txn["payee"])
+            category_tuple = self.get_category_tuple(txn["Category"])
+            payee_id = self.get_cached_payee_id(txn["Payee"])
 
             ynab_txn = YNABTransaction(
-                date=txn["date"],
-                payee=txn["payee"],
+                date=txn["Date"],
+                payee=txn["Payee"],
                 payee_id=payee_id,
-                memo=txn["memo"],
-                amount=txn["amount"],
+                memo=txn["Memo"],
+                amount=txn["Amount"],
                 account_id=self.account_id,
                 category_id=category_ids[category_tuple[1]],
                 category_name=category_tuple[1],
@@ -122,11 +122,14 @@ class YNABAPIHandler(APIHandlerBase):
 
             category_group, category_name = self.get_category_tuple(txn["Category"])
 
-            print(type(self.cached_categories), self.cached_categories)
-            print(category_group)
-            print(category_name)
-            # TODO When the category group doesn't exist, this fails
-            category =  self.cached_categories.get(category_group).get(category_name)
+            category_group =  self.cached_categories.get(category_group)
+
+            if category_group is not None:
+                category = category_group.get(category_name)
+            else:
+                # When a category doesn't exist in YNAB, suggest the user create it
+                raise RuntimeError(f"Category '{category_name}' does not exist! Please create it in YNAB before continuing...")
+
             if category:
                 category_ids[category_name] = category
 

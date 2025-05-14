@@ -14,8 +14,9 @@ def test_cli_runs(monkeypatch):
     config_path.write_text(json.dumps(config))
 
     # Stub subprocess call to just ensure CLI doesn't crash
+    # ["python", "payslip2budget/cli.py", "tests/sample.pdf", "--format", "ynab", "--dry-run", "--api-config", str(config_path), "api"],
     result = subprocess.run(
-        ["python", "cli.py", "tests/sample.pdf", "--format", "ynab", "--api-config", str(config_path), "-"],
+        ["python", "-m", "payslip2budget.cli", "tests/sample.pdf", "--format", "ynab", "-"],
         capture_output=True, text=True
     )
 
