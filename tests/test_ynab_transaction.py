@@ -1,7 +1,6 @@
-# tests/test_transactions.py
 import unittest
 from datetime import date
-from models.ynab_transaction import YNABTransaction
+from payslip2budget.models.ynab_transaction import YNABTransaction
 
 class TestYNABTransaction(unittest.TestCase):
     def test_to_api_dict(self):

@@ -1,5 +1,4 @@
-
-from formatters import ynab
+from payslip2budget.formatters import ynab
 
 def test_ynab_formatter_output():
     transactions = [

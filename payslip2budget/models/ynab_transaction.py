@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from typing import Optional
-from models.transaction_base import Transaction
+from payslip2budget.models.transaction_base import Transaction
 
 @dataclass(kw_only=True)
 class YNABTransaction(Transaction):

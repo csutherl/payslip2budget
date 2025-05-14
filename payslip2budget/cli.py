@@ -1,7 +1,7 @@
 import argparse
-from parsers.adp import PayslipParser
-from formatters import ynab, mint, everydollar, monarch
-from exporters.exporter import TransactionExporter
+from payslip2budget.parsers.adp import PayslipParser
+from payslip2budget.formatters import ynab, mint, everydollar, monarch
+from payslip2budget.exporters.exporter import TransactionExporter
 
 FORMATTERS = {
     "ynab": ynab.format,

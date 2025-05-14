@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from exporters.apihandlers.ynab import YNABAPIHandler
-from models.ynab_transaction import YNABTransaction
+from payslip2budget.exporters.apihandlers.ynab import YNABAPIHandler
+from payslip2budget.models.ynab_transaction import YNABTransaction
 from tests.utils.fixtures import load_json_fixture
 
 class TestYNABAPIHandler(unittest.TestCase):
@@ -54,8 +54,8 @@ class TestYNABAPIHandler(unittest.TestCase):
 
         return mock_response
 
-    @patch("exporters.apihandlers.ynab.requests.post")
-    @patch("exporters.apihandlers.ynab.requests.get", side_effect=mock_requests_get)
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.get", side_effect=mock_requests_get)
     def test_send_transactions_posts_expected_payload(self, mock_get, mock_post):
         mock_post_response = MagicMock()
         mock_post_response.status_code = 201
@@ -73,8 +73,8 @@ class TestYNABAPIHandler(unittest.TestCase):
         self.assertEqual(kwargs["json"]["transactions"][0]["amount"], 123456)
         self.assertEqual(result, {"data": {"transaction_ids": ["123"]}})
 
-    @patch("exporters.apihandlers.ynab.requests.post")
-    @patch("exporters.apihandlers.ynab.requests.get", side_effect=mock_requests_get)
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.get", side_effect=mock_requests_get)
     def test_send_transactions_posts_payee_dne_payload(self, mock_get, mock_post):
         mock_post_response = MagicMock()
         mock_post_response.status_code = 201
@@ -92,7 +92,7 @@ class TestYNABAPIHandler(unittest.TestCase):
         self.assertEqual(kwargs["json"]["transactions"][0]["amount"], 123456)
         self.assertEqual(result, {"data": {"transaction_ids": ["123"]}})
 
-    @patch("exporters.apihandlers.ynab.requests.post")
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
     def test_send_transactions_raises_on_http_error(self, mock_post):
         mock_post.return_value.status_code = 401
         mock_post.return_value.text = "Unauthorized"
@@ -102,7 +102,7 @@ class TestYNABAPIHandler(unittest.TestCase):
 
         self.assertIn("YNAB API call failed", str(cm.exception))
 
-    @patch("exporters.apihandlers.ynab.requests.get")
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.get")
     def test_get_categories_request(self, mock_get):
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -117,7 +117,7 @@ class TestYNABAPIHandler(unittest.TestCase):
         # Confirm the API call was made correctly
         mock_get.assert_called_once()
 
-    @patch("exporters.apihandlers.ynab.requests.get")
+    @patch("payslip2budget.exporters.apihandlers.ynab.requests.get")
     def test_confirm_account_id_validity(self, mock_get):
         mock_response = MagicMock()
         mock_response.status_code = 200

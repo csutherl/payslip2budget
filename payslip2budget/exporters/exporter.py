@@ -1,6 +1,6 @@
 import json
 import os
-from exporters.apihandlers.ynab import YNABAPIHandler
+from payslip2budget.exporters.apihandlers.ynab import YNABAPIHandler
 
 class TransactionExporter:
     def __init__(self, config_path=None, dry_run: bool = False):

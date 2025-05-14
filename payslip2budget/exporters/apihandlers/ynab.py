@@ -1,7 +1,7 @@
 import requests
-from models.transaction_base import Transaction
-from models.ynab_transaction import YNABTransaction
-from exporters.apihandlers.apihandlerbase import APIHandlerBase
+from payslip2budget.models.transaction_base import Transaction
+from payslip2budget.models.ynab_transaction import YNABTransaction
+from payslip2budget.exporters.apihandlers.apihandlerbase import APIHandlerBase
 
 # This class is still a WIP and incomplete!
 class YNABAPIHandler(APIHandlerBase):
