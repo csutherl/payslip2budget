@@ -1,9 +1,11 @@
 import json
 import os
+from exporters.apihandlers.ynab import YNABAPIHandler
 
 class TransactionExporter:
-    def __init__(self, config_path=None):
+    def __init__(self, config_path=None, dry_run: bool = False):
         self.config = {}
+        self.dry_run = dry_run
         self.api_handler = None
 
         if config_path:
@@ -20,7 +22,7 @@ class TransactionExporter:
         api_type = api_config.get("type")
 
         if api_type == "ynab":
-            self.api_handler = YNABAPIHandler(api_config)
+            self.api_handler = YNABAPIHandler(api_config, self.dry_run)
         else:
             raise ValueError(f"Unsupported API type: {api_type}")
 

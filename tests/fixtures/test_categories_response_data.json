@@ -1,0 +1,41 @@
+{
+  "data": {
+    "category_groups": [
+      {
+        "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "name": "Insurance",
+        "hidden": true,
+        "deleted": true,
+        "categories": [
+          {
+            "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "category_group_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "category_group_name": "Insurance",
+            "name": "Medical",
+            "hidden": true,
+            "original_category_group_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            "note": "string",
+            "budgeted": 0,
+            "activity": 0,
+            "balance": 0,
+            "goal_type": "TB",
+            "goal_needs_whole_amount": null,
+            "goal_day": 0,
+            "goal_cadence": 0,
+            "goal_cadence_frequency": 0,
+            "goal_creation_month": "2025-05-12",
+            "goal_target": 0,
+            "goal_target_month": "2025-05-12",
+            "goal_percentage_complete": 0,
+            "goal_months_to_budget": 0,
+            "goal_under_funded": 0,
+            "goal_overall_funded": 0,
+            "goal_overall_left": 0,
+            "deleted": true
+          }
+        ]
+      }
+    ],
+    "server_knowledge": 0
+  }
+}

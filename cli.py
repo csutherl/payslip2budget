@@ -18,6 +18,7 @@ def main():
     parser.add_argument("--categories", help="Path to custom categories JSON file", default=None)
     parser.add_argument("--payee", help="Payee", default="Employer")
     parser.add_argument("--api-config", help="Path to API configuration file (required if output is 'api')", default=None)
+    parser.add_argument("--dry-run", action="store_true", help="Run in dry-run mode without making changes")
 
     args = parser.parse_args()
 
@@ -28,10 +29,10 @@ def main():
     # Handle output
     # TODO: specifing the api-config arg should be enough, default output to None and send to the api when the config is used or error if no output and no api-config arg
     if args.output == "api":
-        if not args.config:
+        if not args.api_config:
             parser.error("--api-config is required when output is 'api'")
 
-        exporter = TransactionExporter(config_path=args.config)
+        exporter = TransactionExporter(config_path=args.api_config, dry_run=args.dry_run)
         exporter.export(transactions, destination="api")
 
     else:
