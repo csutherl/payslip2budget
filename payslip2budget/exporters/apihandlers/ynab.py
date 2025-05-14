@@ -2,6 +2,7 @@ import requests
 from payslip2budget.models.transaction_base import Transaction
 from payslip2budget.models.ynab_transaction import YNABTransaction
 from payslip2budget.exporters.apihandlers.apihandlerbase import APIHandlerBase
+import json
 
 # This class is still a WIP and incomplete!
 class YNABAPIHandler(APIHandlerBase):
@@ -45,12 +46,17 @@ class YNABAPIHandler(APIHandlerBase):
             category_tuple = self.get_category_tuple(txn["Category"])
             payee_id = self.get_cached_payee_id(txn["Payee"])
 
+            # YNAB expects milliunits, so multiplying the amount by 1000 to get that
+            amount_in_milliunits = int(float(txn["Amount"]) * 1000)
+            # Verifying via print that the amount is correct
+            #print(f"Amount: {txn['Amount']}, Type: {type(amount_in_milliunits)}, Value: {amount_in_milliunits}")
+
             ynab_txn = YNABTransaction(
                 date=txn["Date"],
                 payee=txn["Payee"],
                 payee_id=payee_id,
                 memo=txn["Memo"],
-                amount=txn["Amount"],
+                amount=amount_in_milliunits,
                 account_id=self.account_id,
                 category_id=category_ids[category_tuple[1]],
                 category_name=category_tuple[1],
@@ -58,6 +64,7 @@ class YNABAPIHandler(APIHandlerBase):
 
             ynab_transactions.append(ynab_txn)
 
+        #print(ynab_transactions)
         payload = {"transactions": ynab_transactions}
 
         # THe dryrun still does all the GETs, but returns before the POST so no changes are made
@@ -121,14 +128,13 @@ class YNABAPIHandler(APIHandlerBase):
                 continue
 
             category_group, category_name = self.get_category_tuple(txn["Category"])
-
             category_group =  self.cached_categories.get(category_group)
 
             if category_group is not None:
                 category = category_group.get(category_name)
             else:
                 # When a category doesn't exist in YNAB, suggest the user create it
-                raise RuntimeError(f"Category '{category_name}' does not exist! Please create it in YNAB before continuing...")
+                raise RuntimeError(f"Category '{category_name}' does not exist! This check is case-sensitive. Please create it in YNAB before continuing...")
 
             if category:
                 category_ids[category_name] = category

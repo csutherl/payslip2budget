@@ -8,4 +8,4 @@ class Transaction:
     payee: str
     category: Optional[str] = None
     memo: str
-    amount: float  # In dollars for base class
+    amount: int  # In dollars for base class

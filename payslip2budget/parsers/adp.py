@@ -27,7 +27,8 @@ class PayslipParser:
             "Taxes:Stock Award Withholding": ["stock offset"],
             "Taxes:Withholding": ["withholding"],
             "Taxes:Social Security": ["social security"],
-            "Taxes:Medicare": ["medicare"]
+            "Taxes:Medicare": ["medicare"],
+            "Gross Pay Offset": "Income:Gross Pay Offset"
         }
         
         # Load custom configuration if provided
@@ -63,6 +64,10 @@ class PayslipParser:
         text_lower = text.lower()
         
         for category, keywords in self.category_mappings.items():
+            # Adding the "Gross Pay Offset" key screwed up the dict, so let's skip it
+            if category.lower() == "gross pay offset":
+                continue
+
             if any(keyword.lower() in text_lower for keyword in keywords):
                 return category
         
@@ -83,6 +88,7 @@ class PayslipParser:
         total_deductions = 0.0
         total_additions = 0.0
         tax_type = None
+        check_date = datetime.today()
         
         # Suppress pdfplumber/pdfminer warnings
         logging.getLogger('pdfminer').setLevel(logging.ERROR)
@@ -102,10 +108,14 @@ class PayslipParser:
                     elif "additional deductions" in line.lower():
                         tax_type = None
                         continue
+                    elif "check date" in line.lower():
+                        # Grab the date the payments were issued
+                        # TODO make this more robust or configurable so that other date formats don't break it
+                        check_date = datetime.strptime(line.split(":")[1].strip(), "%m/%d/%Y")
                     
                     # Find all potential deduction items in the line
                     items = self.extract_deduction_items(line)
-                    
+
                     for item_name, amount in items:
                         category = self.categorize_line(item_name)
                         if category:
@@ -123,7 +133,7 @@ class PayslipParser:
                                     category = f"Taxes:{tax_type} Withholding"
 
                             transactions.append({
-                                "Date": datetime.today().strftime('%Y-%m-%d'),
+                                "Date": check_date.strftime('%Y-%m-%d'),
                                 "Payee": self.payee,
                                 "Category": category,
                                 "Memo": memo,
@@ -133,9 +143,9 @@ class PayslipParser:
         # Offset deductions with an addition
         if total_deductions > 0:
             transactions.append({
-                "Date": datetime.today().strftime('%Y-%m-%d'),
+                "Date": check_date.strftime('%Y-%m-%d'),
                 "Payee": self.payee,
-                "Category": "Income:Gross Pay Offset",
+                "Category": self.category_mappings.get("Gross Pay Offset"),
                 "Memo": "Offset for itemized paycheck deductions",
                 "Amount": f"{total_deductions:.2f}"
             })
@@ -143,9 +153,9 @@ class PayslipParser:
         # Offset additions with a deduction
         if total_additions > 0:
             transactions.append({
-                "Date": datetime.today().strftime('%Y-%m-%d'),
+                "Date": check_date.strftime('%Y-%m-%d'),
                 "Payee": self.payee,
-                "Category": "Income:Gross Pay Offset",
+                "Category": self.category_mappings.get("Gross Pay Offset"),
                 "Memo": "Offset for itemized paycheck additions (employer contributions)",
                 "Amount": f"-{total_additions:.2f}"
             })
@@ -299,5 +309,5 @@ class PayslipParser:
                         
                         break
         
-        # print(f"Extracted items: {items}")
+        #print(f"Extracted items: {items}")
         return items

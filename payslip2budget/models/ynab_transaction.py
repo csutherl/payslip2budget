@@ -18,7 +18,7 @@ class YNABTransaction(Transaction):
         return {
             "account_id": self.account_id,
             "date": self.date,
-            "amount": self.amount,
+            "amount": int(self.amount),
             "payee_name": self.payee,
             "payee_id": self.payee_id,
             "memo": self.memo,
