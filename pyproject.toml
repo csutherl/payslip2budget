@@ -8,8 +8,10 @@ version = "0.1.0"
 description = "Convert payslip PDF to budget transactions (YNAB, Mint, EveryDollar, Monarch)"
 readme = "README.md"
 requires-python = ">=3.7"
-authors = ["Coty Sutherland <sutherland.coty@gmail.com>"]
-license = { text = "MIT" }
+authors = [
+    {name = "Coty Sutherland"},
+]
+license = "MIT"
 dependencies = [
   "PyPDF2",
   "pdfplumber",
