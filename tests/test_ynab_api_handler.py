@@ -1,4 +1,6 @@
 import unittest
+import io
+import sys
 from unittest.mock import patch, MagicMock
 from payslip2budget.exporters.apihandlers.ynab import YNABAPIHandler
 from payslip2budget.models.ynab_transaction import YNABTransaction
@@ -56,7 +58,8 @@ class TestYNABAPIHandler(unittest.TestCase):
 
     @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
     @patch("payslip2budget.exporters.apihandlers.ynab.requests.get", side_effect=mock_requests_get)
-    def test_send_transactions_posts_expected_payload(self, mock_get, mock_post):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_send_transactions_posts_expected_payload(self, stdout_mock, mock_get, mock_post):
         mock_post_response = MagicMock()
         mock_post_response.status_code = 201
         mock_post_response.json.return_value = {"data": {"transaction_ids": ["123"]}}
@@ -75,7 +78,8 @@ class TestYNABAPIHandler(unittest.TestCase):
 
     @patch("payslip2budget.exporters.apihandlers.ynab.requests.post")
     @patch("payslip2budget.exporters.apihandlers.ynab.requests.get", side_effect=mock_requests_get)
-    def test_send_transactions_posts_payee_dne_payload(self, mock_get, mock_post):
+    @patch('sys.stdout', new_callable=io.StringIO)
+    def test_send_transactions_posts_payee_dne_payload(self, stdout_mock, mock_get, mock_post):
         mock_post_response = MagicMock()
         mock_post_response.status_code = 201
         mock_post_response.json.return_value = {"data": {"transaction_ids": ["123"]}}
