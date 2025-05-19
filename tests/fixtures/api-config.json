@@ -1,0 +1,8 @@
+{
+    "api": {
+        "api_key": "test",
+        "budget_id": "test",
+        "account_id": "test",
+        "type": "ynab"
+    }
+}

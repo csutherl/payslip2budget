@@ -1,24 +1,29 @@
 import subprocess
+import unittest
 import json
 import tempfile
 from pathlib import Path
 
-def test_cli_runs(monkeypatch):
-    # Write dummy categories and config
-    config = {
-        "api_key": "fake-token",
-        "budget_id": "budget-123",
-        "account_id": "account-abc"
-    }
-    config_path = Path(tempfile.gettempdir()) / "test_config.json"
-    config_path.write_text(json.dumps(config))
+class TestCLI(unittest.TestCase):
 
-    # Stub subprocess call to just ensure CLI doesn't crash
-    # ["python", "payslip2budget/cli.py", "tests/sample.pdf", "--format", "ynab", "--dry-run", "--api-config", str(config_path), "api"],
-    result = subprocess.run(
-        ["python", "-m", "payslip2budget.cli", "tests/sample.pdf", "--format", "ynab", "-"],
-        capture_output=True, text=True
-    )
+    def test_cli_runs(self):
+        # Stub subprocess call to just ensure CLI doesn't crash
+        result = subprocess.run(
+            ["python", "-m", "payslip2budget.cli", "tests/fixtures/sample.pdf", "--format", "ynab", "-"],
+            capture_output=True, text=True
+        )
 
-    assert result.returncode == 0
-    assert "csv" in result.stdout or "error" not in result.stderr.lower()
+        assert result.returncode == 0
+        assert "csv" in result.stdout or "error" not in result.stderr.lower()
+
+    def test_format_and_api_config(self):
+        result = subprocess.run(
+            ["python", "-m", "payslip2budget.cli", "tests/fixtures/sample.pdf", "--api-config", "tests/fixtures/api-config.json", "--format", "ynab", "-"],
+            capture_output=True, text=True
+        )
+
+        assert result.returncode == 1
+        assert "[WARN] Format is ignored when using an api-config" in result.stdout
+
+if __name__ == '__main__':
+    unittest.main()
