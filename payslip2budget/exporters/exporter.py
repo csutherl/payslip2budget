@@ -1,6 +1,7 @@
 import json
 import os
 from payslip2budget.exporters.apihandlers.ynab import YNABAPIHandler
+from payslip2budget.exporters.apihandlers.google_sheets import GoogleSheetsAPIHandler
 
 class TransactionExporter:
     def __init__(self, config_path=None, dry_run: bool = False):
@@ -23,6 +24,8 @@ class TransactionExporter:
 
         if api_type == "ynab":
             self.api_handler = YNABAPIHandler(api_config, self.dry_run)
+        elif api_type == "google_sheets": # New block
+            self.api_handler = GoogleSheetsAPIHandler(api_config, self.dry_run)
         else:
             raise ValueError(f"Unsupported API type: {api_type}")
 

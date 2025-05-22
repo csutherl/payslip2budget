@@ -133,6 +133,93 @@ The YNAB API handler will attempt to match payee names from your payslip data to
 
 Reviewing your YNAB payees after the first few imports can help you manage and merge any unintentionally created duplicates.
 
+### Using the Google Sheets API Exporter
+
+This exporter allows you to send your processed payslip transactions directly to a Google Sheet. It is also invoked using the `--api-config` flag, but you will need to create a specific configuration file for Google Sheets.
+
+#### 1. Prerequisites - Google Cloud Setup
+
+Before you can use this exporter, you need to set up a project in Google Cloud Console and get API credentials.
+
+1.  **Create or Select a Project:** Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new project or select an existing one.
+2.  **Enable Google Sheets API:**
+    *   Navigate to the "APIs & Services" > "Library".
+    *   Search for "Google Sheets API" and enable it for your project.
+3.  **Create OAuth 2.0 Credentials:**
+    *   Go to "APIs & Services" > "Credentials".
+    *   Click "+ CREATE CREDENTIALS" and select "OAuth client ID".
+    *   For "Application type", choose "Desktop app".
+    *   Give it a name (e.g., "payslip2budget-sheets-client").
+    *   After creation, a pop-up will show your Client ID and Client Secret. Click "OK".
+    *   On the Credentials page, find your newly created OAuth client ID and click the **download icon (JSON)** (⬇️) on the right. This will download a `client_secret_*.json` file.
+4.  **Place `credentials.json`:**
+    *   Rename the downloaded file to `credentials.json`.
+    *   Place this `credentials.json` file in the root directory of the `payslip2budget` project, or in a custom location that you will specify in your `google-sheets-config.json` file (see below).
+
+#### 2. Authentication Flow (`token.json`)
+
+*   **First Run:** The first time you run `payslip2budget` with a Google Sheets API configuration, the tool will attempt to open a web browser. You will be prompted to log in with your Google account and authorize the application to access your Google Sheets on your behalf.
+*   **`token.json` Creation:** Upon successful authorization, a `token.json` file will be created in the same directory as your `credentials.json` file. This file stores your access and refresh tokens, so you don't have to re-authorize every time.
+*   **Subsequent Runs:** On subsequent runs, the tool will use the stored `token.json` to authenticate. If the token is expired or revoked (e.g., if you manually delete `token.json` or revoke access via your Google account settings), the browser-based authorization flow will be triggered again.
+*   **Security Note:** The `credentials.json` and `token.json` files contain sensitive information. **Do NOT commit them to version control (e.g., Git).** Ensure they are listed in your project's `.gitignore` file. The default names `credentials.json` and `token.json` are used by the authentication script.
+
+#### 3. Configuration File (`google-sheets-config.json`)
+
+You need to create a JSON configuration file to tell `payslip2budget` how to connect to your Google Sheet. You will then provide the path to this file using the `--api-config` command-line argument.
+
+See the example configuration file: `payslip2budget/exporters/apihandlers/google-sheets-config.json.example`.
+
+The configuration file requires the following fields:
+
+*   `"api"`: An object containing the Google Sheets specific configuration.
+    *   `"type"`: Must be set to `"google_sheets"`.
+    *   `"spreadsheet_id"`: The ID of your target Google Spreadsheet. You can find this in the spreadsheet's URL. For example, if your URL is `https://docs.google.com/spreadsheets/d/ABC123xyz789_defGHI/edit#gid=0`, your `spreadsheet_id` is `ABC123xyz789_defGHI`.
+    *   `"worksheet_name"` (optional): The name of the specific worksheet (tab) within your spreadsheet where the transactions should be added. If omitted, it defaults to `"Transactions"`. The script will append rows to this worksheet.
+    *   `"credentials_json_path"` (optional): The path to your `credentials.json` file. If omitted, it defaults to `"credentials.json"` (expected to be in the current working directory when you run the script).
+    *   `"write_mode"` (optional): Specifies how data should be written to the sheet.
+        *   `"append"` (default): Adds new transactions after the last existing row in the sheet.
+        *   `"overwrite"`: Clears all existing data in the worksheet (including headers) and writes the new transactions. The header row (`Date, Payee, Category, Amount, Memo`) will be written first.
+
+Here's an example of what your `google-sheets-config.json` might look like:
+
+```json
+{
+  "api": {
+    "type": "google_sheets",
+    "spreadsheet_id": "YOUR_ACTUAL_SPREADSHEET_ID",
+    "worksheet_name": "My Payslip Imports",
+    "credentials_json_path": "path/to/your/credentials.json" 
+  }
+}
+```
+*(Remember to replace placeholders with your actual data and ensure the path to `credentials.json` is correct if it's not in the default location.)*
+
+#### 4. Usage Example
+
+Once your `credentials.json` is in place and your `google-sheets-config.json` file is created, you can run the exporter:
+
+```bash
+payslip2budget your_payslip.pdf --api-config path/to/your/google-sheets-config.json
+```
+
+#### 5. Output Columns
+
+The exporter will append rows to your specified worksheet with the following columns, creating the header row if the sheet is empty or the header doesn't match:
+
+1.  `Date`
+2.  `Payee`
+3.  `Category`
+4.  `Amount` (negative for outflows, positive for inflows)
+5.  `Memo`
+
+#### 6. Dry Run
+
+You can use the `--dry-run` global flag to see what data would be sent to your Google Sheet without actually writing any data. This is useful for verifying your setup and the parsed transaction data.
+
+```bash
+payslip2budget your_payslip.pdf --api-config path/to/your/google-sheets-config.json --dry-run
+```
+
 ## 🧪 Running Tests
 
 ```bash

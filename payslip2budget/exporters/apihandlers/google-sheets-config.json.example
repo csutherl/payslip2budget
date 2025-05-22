@@ -1,0 +1,9 @@
+{
+  "api": {
+    "type": "google_sheets",
+    "spreadsheet_id": "YOUR_GOOGLE_SPREADSHEET_ID",
+    "worksheet_name": "Transactions",
+    "credentials_json_path": "credentials.json",
+    "write_mode": "append" 
+  }
+}

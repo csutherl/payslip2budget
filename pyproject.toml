@@ -15,7 +15,9 @@ license = "MIT"
 dependencies = [
   "PyPDF2",
   "pdfplumber",
-  "requests"
+  "requests",
+  "google-api-python-client",
+  "google-auth-oauthlib"
 ]
 
 [project.optional-dependencies]
